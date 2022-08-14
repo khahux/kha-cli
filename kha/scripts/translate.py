@@ -4,7 +4,7 @@ from urllib.request import Request, urlopen
 
 import click
 
-from kha import T_CONFIG_FILENAME
+from kha.const import T_CONFIG_FILENAME
 
 
 CODE_MSG_MAP = {

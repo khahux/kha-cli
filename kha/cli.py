@@ -2,11 +2,12 @@ import json
 
 import click
 
-from kha import print_version, BASE_CONFIG_PATH, T_CONFIG_FILENAME
+from kha import __version__
 from kha.scripts.ssh import ssh
 from kha.scripts.translate import t
 from kha.scripts.ts import ts
 from kha.utils.file_utils import exists, mkdirs
+from kha.const import BASE_CONFIG_PATH, T_CONFIG_FILENAME
 
 
 CONTEXT_SETTINGS = dict(
@@ -15,6 +16,13 @@ CONTEXT_SETTINGS = dict(
         't': {'key': 0, 'keyfrom': ''},
     }
 )
+
+
+def print_version(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo(__version__)
+    ctx.exit()
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)

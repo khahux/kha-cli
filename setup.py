@@ -1,14 +1,14 @@
+import os
 from setuptools import find_packages, setup
 
 import kha
 
 
-def read(f):
-    return open(f, 'r', encoding='utf-8').read()
+_root = os.path.abspath(os.path.dirname(__file__))
 
 
-with open('requirements.txt', 'r') as f:
-    install_requires = f.read().splitlines()
+with open(os.path.join(_root, 'README.md')) as f:
+    readme = f.read()
 
 
 setup(
@@ -16,16 +16,18 @@ setup(
     version=kha.__version__,
     py_modules=['kha-cli'],
     description='kha',
-    long_description=read('README.md'),
+    long_description=readme,
     long_description_content_type='text/markdown',
     author='khahux',
     author_email='khahux@gmail.com',
-    install_requires=install_requires,
+    install_requires=['click==8.1.3'],
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    entry_points='''
-        [console_scripts]
-        kha=kha.cli:cli
-    '''
+    python_requires='>=3.8',
+    entry_points={
+        'console_scripts': [
+            'kha = kha.cli:cli',
+        ],
+    }
 )

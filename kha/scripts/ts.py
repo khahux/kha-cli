@@ -3,8 +3,7 @@ from datetime import datetime
 
 import click
 
-
-FORMAT_DATETIME = '%Y-%m-%d %H:%M:%S'
+from kha.const import FORMAT_DATETIME
 
 
 @click.command('ts', short_help='时间戳')
