@@ -1,14 +1,10 @@
-from __future__ import print_function
-
 import json
-try:
-    from urllib import urlencode
-    from urllib2 import Request, urlopen
-except ImportError:
-    from urllib.parse import urlencode
-    from urllib.request import Request, urlopen
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 import click
+
+from kha import T_CONFIG_FILENAME
 
 
 CODE_MSG_MAP = {
@@ -62,3 +58,23 @@ def translate(q, keyfrom, key):
     if web and isinstance(web, list):
         for item in web:
             click.echo('{k}: {v}'.format(k=item['key'], v='\033[1;31;40m; \033[0m'.join(item['value'])))
+
+
+@click.command('t', short_help='有道翻译')
+@click.argument('text', nargs=-1, type=str)
+@click.option('--key', type=int)
+@click.option('--keyfrom', type=str)
+@click.pass_context
+def t(ctx, text, key, keyfrom):
+    if key and keyfrom:
+        with open(T_CONFIG_FILENAME, 'w') as config:
+            json.dump(
+                {'key': key, 'keyfrom': keyfrom}, config, sort_keys=True, indent=2)
+            return
+
+    click.echo()
+    if ctx.obj.get('t') and isinstance(ctx.obj.get('t'), dict):
+        key = ctx.obj.get('t').get('key')
+        keyfrom = ctx.obj.get('t').get('keyfrom')
+    translate(' '.join(text), keyfrom, key)
+    click.echo()

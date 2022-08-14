@@ -1,16 +1,16 @@
-import os
 import json
 
 import click
 
-from kha import print_version
-from kha.scripts.translate import translate
+from kha import print_version, BASE_CONFIG_PATH, T_CONFIG_FILENAME
+from kha.scripts.ssh import ssh
+from kha.scripts.translate import t
+from kha.scripts.ts import ts
 from kha.utils.file_utils import exists, mkdirs
 
 
-BASE_CONFIG_PATH = os.path.expanduser('~/.kha')
-T_CONFIG_FILENAME = os.path.join(BASE_CONFIG_PATH, 't.json')
 CONTEXT_SETTINGS = dict(
+    help_option_names=['-h', '--help'],
     default_map={
         't': {'key': 0, 'keyfrom': ''},
     }
@@ -19,7 +19,7 @@ CONTEXT_SETTINGS = dict(
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option('--debug/--no-debug', default=False)
-@click.option('--version', is_flag=True, callback=print_version, expose_value=False, is_eager=True)
+@click.option('-v', '--version', is_flag=True, callback=print_version, expose_value=False, is_eager=True)
 @click.pass_context
 def cli(ctx, debug):
     ctx.ensure_object(dict)
@@ -38,37 +38,20 @@ def cli(ctx, debug):
         pass
 
 
-@cli.command()
+@cli.command('greet', short_help='欢迎')
 @click.option('--string', default='world')
 @click.pass_context
 def greet(ctx, string):
+    click.echo()
     click.echo(f'🦄 hello, {string}.')
+    click.echo()
     click.echo(json.dumps(ctx.obj, indent=2))
-
-
-@cli.command()
-@click.argument('text', nargs=-1, type=str)
-@click.option('--key', type=int)
-@click.option('--keyfrom', type=str)
-@click.pass_context
-def t(ctx, text, key, keyfrom):
-    if key and keyfrom:
-        with open(T_CONFIG_FILENAME, 'w') as config:
-            json.dump(
-                {'key': key, 'keyfrom': keyfrom}, config, sort_keys=True, indent=2)
-            return
-
-    click.echo()
-    if ctx.obj.get('t') and isinstance(ctx.obj.get('t'), dict):
-        key = ctx.obj.get('t').get('key')
-        keyfrom = ctx.obj.get('t').get('keyfrom')
-    translate(' '.join(text), keyfrom, key)
     click.echo()
 
-@cli.command()
-@click.pass_context
-def ssh(ctx):
-    click.echo('ssh')
+
+cli.add_command(t)
+cli.add_command(ts)
+cli.add_command(ssh)
 
 
 if __name__ == '__main__':
