@@ -20,7 +20,11 @@ setup(
     long_description_content_type='text/markdown',
     author='khahux',
     author_email='khahux@gmail.com',
-    install_requires=['click==8.1.3'],
+    install_requires=[
+        'click==8.1.3',
+        'inquirer==2.10.0',
+        'pexpect==4.8.0'
+    ],
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
